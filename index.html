@@ -8,131 +8,116 @@
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --bg:#080b0f;
-  --surface:#0d1117;
-  --surface2:#111820;
-  --border:#1a2a1a;
-  --accent:#00ff41;
-  --accent2:#00cc33;
-  --dim:#005510;
-  --red:#ff3333;
-  --yellow:#ffcc00;
-  --text:#c8ffc8;
-  --muted:#4a7a4a;
-  --radius:8px;
+  --bg:#080b0f;--surface:#0d1117;--surface2:#111820;
+  --border:#1a2a1a;--accent:#00ff41;--accent2:#00cc33;
+  --dim:#005510;--red:#ff3333;--text:#c8ffc8;--muted:#4a7a4a;--radius:8px;
 }
 body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-height:100vh;padding:16px;overflow-x:hidden}
 body::before{content:'';position:fixed;top:0;left:0;right:0;bottom:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,255,65,0.015) 2px,rgba(0,255,65,0.015) 4px);pointer-events:none;z-index:0}
 .wrap{max-width:740px;margin:0 auto;position:relative;z-index:1}
 
-/* Header */
-.header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:10px}
+.ticker{overflow:hidden;white-space:nowrap;font-family:'Share Tech Mono',monospace;font-size:0.7rem;color:var(--dim);margin-bottom:14px;border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:4px 0}
+.ticker-inner{display:inline-block;animation:scroll 25s linear infinite}
+@keyframes scroll{0%{transform:translateX(100%)}100%{transform:translateX(-100%)}}
+
+.header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px;gap:12px;flex-wrap:wrap}
 .logo{font-family:'Share Tech Mono',monospace;font-size:1.1rem;color:var(--accent);letter-spacing:2px}
 .logo span{color:var(--muted)}
+.logo-sub{font-family:'Share Tech Mono',monospace;font-size:0.65rem;color:var(--muted);margin-top:3px}
 
-/* Clock */
-.clock-wrap{display:flex;align-items:center;gap:14px}
-.clock-circle{position:relative;width:80px;height:80px}
-.clock-circle svg{transform:rotate(-90deg)}
-.clock-digital{font-family:'Share Tech Mono',monospace;font-size:0.85rem;color:var(--accent);text-align:center}
-.clock-date{font-family:'Share Tech Mono',monospace;font-size:0.7rem;color:var(--muted);text-align:center;margin-top:2px}
+.clock-block{display:flex;flex-direction:column;align-items:center;gap:8px}
+.clock-analog{position:relative;width:90px;height:90px}
+.clock-analog svg{display:block}
+.clock-digital-box{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:6px 14px;font-family:'Share Tech Mono',monospace;font-size:1rem;color:var(--accent);text-align:center;letter-spacing:2px}
+.clock-date-box{font-family:'Share Tech Mono',monospace;font-size:0.68rem;color:var(--muted);text-align:center}
 
-/* Weather */
-.weather-pill{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:8px 14px;font-family:'Share Tech Mono',monospace;font-size:0.8rem;color:var(--accent);display:flex;align-items:center;gap:8px}
+.weather-pill{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:8px 14px;font-family:'Share Tech Mono',monospace;font-size:0.8rem;color:var(--accent);text-align:center;margin-top:6px}
 
-/* Stats */
-.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px}
 .stat{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px;text-align:center;position:relative;overflow:hidden}
 .stat::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--accent)}
 .stat-val{font-family:'Share Tech Mono',monospace;font-size:1.6rem;color:var(--accent);display:block}
-.stat-lbl{font-size:0.7rem;color:var(--muted);margin-top:4px;text-transform:uppercase;letter-spacing:1px}
+.stat-lbl{font-size:0.68rem;color:var(--muted);margin-top:4px;text-transform:uppercase;letter-spacing:1px}
 
-/* Progress */
-.progress-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:16px}
-.progress-header{display:flex;justify-content:space-between;margin-bottom:10px;font-family:'Share Tech Mono',monospace;font-size:0.8rem}
+.progress-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px;margin-bottom:14px}
+.progress-header{display:flex;justify-content:space-between;margin-bottom:10px;font-family:'Share Tech Mono',monospace;font-size:0.78rem}
 .progress-header span:last-child{color:var(--accent)}
 .bar-bg{background:var(--dim);border-radius:2px;height:6px;overflow:hidden}
 .bar-fill{height:100%;background:var(--accent);border-radius:2px;transition:width 0.6s ease;position:relative}
-.bar-fill::after{content:'';position:absolute;right:0;top:-2px;bottom:-2px;width:3px;background:#fff;opacity:0.8;animation:blink 1s infinite}
-@keyframes blink{0%,100%{opacity:0.8}50%{opacity:0.2}}
+.bar-fill::after{content:'';position:absolute;right:0;top:-2px;bottom:-2px;width:3px;background:#fff;opacity:0.7;animation:blink 1s infinite}
+@keyframes blink{0%,100%{opacity:0.7}50%{opacity:0.1}}
 
-/* Date nav */
-.date-nav{display:flex;align-items:center;justify-content:center;gap:12px;margin-bottom:16px}
-.date-nav button{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);color:var(--accent);padding:7px 16px;cursor:pointer;font-family:'Share Tech Mono',monospace;font-size:0.9rem;transition:all 0.15s}
+.date-nav{display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:14px}
+.date-nav button{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);color:var(--accent);padding:7px 14px;cursor:pointer;font-family:'Share Tech Mono',monospace;font-size:0.85rem;transition:all 0.15s}
 .date-nav button:hover{border-color:var(--accent);background:var(--dim)}
-.date-label{font-family:'Share Tech Mono',monospace;font-size:0.85rem;color:var(--text);min-width:180px;text-align:center}
+.date-label{font-family:'Share Tech Mono',monospace;font-size:0.82rem;color:var(--text);min-width:170px;text-align:center}
 
-/* Tasks */
-.section-label{font-family:'Share Tech Mono',monospace;font-size:0.7rem;color:var(--muted);letter-spacing:2px;text-transform:uppercase;margin-bottom:10px}
-.task-list{display:flex;flex-direction:column;gap:8px;margin-bottom:16px}
-.task{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:13px 16px;display:flex;align-items:center;gap:12px;cursor:pointer;transition:all 0.2s;position:relative;overflow:hidden}
-.task::before{content:'> ';font-family:'Share Tech Mono',monospace;font-size:0.8rem;color:var(--dim)}
+.section-label{font-family:'Share Tech Mono',monospace;font-size:0.68rem;color:var(--muted);letter-spacing:2px;text-transform:uppercase;margin-bottom:8px}
+.task-list{display:flex;flex-direction:column;gap:7px;margin-bottom:14px}
+.task{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:12px 14px;display:flex;align-items:center;gap:10px;cursor:pointer;transition:all 0.2s}
+.task::before{content:'> ';font-family:'Share Tech Mono',monospace;font-size:0.75rem;color:var(--dim);flex-shrink:0}
 .task:hover{border-color:var(--accent);background:var(--surface2)}
 .task.done{border-color:var(--accent2);background:rgba(0,255,65,0.04)}
 .task.done::before{color:var(--accent)}
-.task-icon{font-size:1.1rem;width:24px;text-align:center}
-.task-name{flex:1;font-size:0.9rem}
+.task-icon{font-size:1rem;width:22px;text-align:center;flex-shrink:0}
+.task-name{flex:1;font-size:0.88rem}
 .task.done .task-name{text-decoration:line-through;color:var(--muted)}
-.check{width:20px;height:20px;border:1px solid var(--muted);border-radius:2px;display:flex;align-items:center;justify-content:center;font-family:'Share Tech Mono',monospace;font-size:0.7rem;flex-shrink:0;transition:all 0.2s}
+.check{width:20px;height:20px;border:1px solid var(--muted);border-radius:2px;display:flex;align-items:center;justify-content:center;font-family:'Share Tech Mono',monospace;font-size:0.68rem;flex-shrink:0;transition:all 0.2s}
 .task.done .check{background:var(--accent);border-color:var(--accent);color:#000}
 
-/* Add task */
-.add-row{display:flex;gap:8px;margin-bottom:16px}
-.add-input{flex:1;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);color:var(--text);padding:10px 14px;font-size:0.85rem;font-family:'Inter',sans-serif;outline:none;transition:border-color 0.2s}
+.add-row{display:flex;gap:8px;margin-bottom:14px}
+.add-input{flex:1;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);color:var(--text);padding:10px 12px;font-size:0.85rem;outline:none;transition:border-color 0.2s;font-family:'Inter',sans-serif}
 .add-input:focus{border-color:var(--accent)}
 .add-input::placeholder{color:var(--muted)}
-.add-btn{background:var(--dim);border:1px solid var(--accent);border-radius:var(--radius);color:var(--accent);padding:10px 18px;cursor:pointer;font-family:'Share Tech Mono',monospace;font-size:0.85rem;transition:all 0.15s;white-space:nowrap}
+.add-btn{background:var(--dim);border:1px solid var(--accent);border-radius:var(--radius);color:var(--accent);padding:10px 16px;cursor:pointer;font-family:'Share Tech Mono',monospace;font-size:0.82rem;transition:all 0.15s;white-space:nowrap}
 .add-btn:hover{background:var(--accent);color:#000}
 
-/* Chart */
-.chart-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:16px}
-.chart-bars{display:flex;align-items:flex-end;gap:6px;height:70px;margin-top:12px}
+.chart-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px;margin-bottom:14px}
+.chart-bars{display:flex;align-items:flex-end;gap:5px;height:68px;margin-top:10px}
 .bar-wrap{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;height:100%;justify-content:flex-end}
 .bar-item{width:100%;border-radius:2px 2px 0 0;min-height:3px;transition:height 0.5s ease}
-.bar-lbl{font-family:'Share Tech Mono',monospace;font-size:0.6rem;color:var(--muted)}
+.bar-lbl{font-family:'Share Tech Mono',monospace;font-size:0.58rem;color:var(--muted)}
 
-/* Terminal footer */
-.terminal{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:12px 16px;font-family:'Share Tech Mono',monospace;font-size:0.75rem;color:var(--muted)}
+.terminal{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:10px 14px;font-family:'Share Tech Mono',monospace;font-size:0.73rem;color:var(--muted)}
 .terminal span{color:var(--accent)}
 
-/* Scrolling text */
-.ticker{overflow:hidden;white-space:nowrap;font-family:'Share Tech Mono',monospace;font-size:0.7rem;color:var(--dim);margin-bottom:12px;border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:4px 0}
-.ticker-inner{display:inline-block;animation:scroll 20s linear infinite}
-@keyframes scroll{0%{transform:translateX(100%)}100%{transform:translateX(-100%)}}
-
-@media(max-width:500px){.stats{grid-template-columns:1fr 1fr}.clock-circle{width:60px;height:60px}}
+@media(max-width:480px){
+  .stats{grid-template-columns:1fr 1fr}
+  .stat:last-child{grid-column:span 2}
+  .clock-analog{width:80px;height:80px}
+  .clock-digital-box{font-size:0.9rem;padding:5px 12px}
+}
 </style>
 </head>
 <body>
 <div class="wrap">
 
-<div class="ticker">
-  <span class="ticker-inner">[ SYSTEM ACTIVE ] &nbsp;&nbsp; IELTS PREP: ON &nbsp;&nbsp; KALI LINUX: LEARNING &nbsp;&nbsp; STREAK: LOADING... &nbsp;&nbsp; STAY FOCUSED &nbsp;&nbsp; CONSISTENCY IS KEY &nbsp;&nbsp; [ SYSTEM ACTIVE ] &nbsp;&nbsp;</span>
-</div>
+<div class="ticker"><span class="ticker-inner" id="tickerText">[ SYSTEM ACTIVE ] &nbsp; IELTS PREP: ON &nbsp; KALI LINUX: LEARNING &nbsp; STREAK: ... &nbsp; STAY FOCUSED &nbsp;</span></div>
 
 <div class="header">
   <div>
     <div class="logo"><span>//</span> LIFE_TRACKER <span>v2.0</span></div>
-    <div style="font-family:'Share Tech Mono',monospace;font-size:0.65rem;color:var(--muted);margin-top:2px">abdulboriy@localhost:~$</div>
+    <div class="logo-sub">abdulboriy@localhost:~$</div>
   </div>
-  <div class="clock-wrap">
-    <div>
-      <div class="clock-circle">
-        <svg width="80" height="80" viewBox="0 0 80 80">
-          <circle cx="40" cy="40" r="34" fill="none" stroke="#1a2a1a" stroke-width="4"/>
-          <circle id="secArc" cx="40" cy="40" r="34" fill="none" stroke="#00ff41" stroke-width="2" stroke-dasharray="213.6" stroke-dashoffset="213.6" stroke-linecap="round"/>
-          <circle cx="40" cy="40" r="28" fill="none" stroke="#0d1117" stroke-width="1"/>
-          <line id="hourHand" x1="40" y1="40" x2="40" y2="18" stroke="#00ff41" stroke-width="2.5" stroke-linecap="round"/>
-          <line id="minHand" x1="40" y1="40" x2="40" y2="12" stroke="#00cc33" stroke-width="1.5" stroke-linecap="round"/>
-          <line id="secHand" x1="40" y1="40" x2="40" y2="10" stroke="#ff3333" stroke-width="1" stroke-linecap="round"/>
-          <circle cx="40" cy="40" r="2.5" fill="#00ff41"/>
+  <div style="display:flex;gap:12px;align-items:flex-start">
+    <div class="clock-block">
+      <div class="clock-analog">
+        <svg width="90" height="90" viewBox="0 0 90 90" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="45" cy="45" r="40" fill="#0d1117" stroke="#1a2a1a" stroke-width="2"/>
+          <circle cx="45" cy="45" r="35" fill="none" stroke="#005510" stroke-width="1" stroke-dasharray="3 4"/>
+          <circle id="secArc" cx="45" cy="45" r="40" fill="none" stroke="#00ff41" stroke-width="2" stroke-dasharray="251.3" stroke-dashoffset="251.3" stroke-linecap="round" transform="rotate(-90 45 45)"/>
+          <line id="hourHand" x1="45" y1="45" x2="45" y2="20" stroke="#00ff41" stroke-width="3" stroke-linecap="round"/>
+          <line id="minHand" x1="45" y1="45" x2="45" y2="12" stroke="#00cc33" stroke-width="2" stroke-linecap="round"/>
+          <line id="secHand" x1="45" y1="47" x2="45" y2="10" stroke="#ff3333" stroke-width="1.2" stroke-linecap="round"/>
+          <circle cx="45" cy="45" r="3" fill="#00ff41"/>
+          <circle cx="45" cy="45" r="1.5" fill="#080b0f"/>
         </svg>
       </div>
-      <div class="clock-digital" id="digitalClock">00:00:00</div>
-      <div class="clock-date" id="clockDate">---</div>
+      <div class="clock-digital-box" id="digitalClock">00:00:00</div>
+      <div class="clock-date-box" id="clockDate">---</div>
     </div>
-    <div id="weatherWrap">
-      <div class="weather-pill">-- °C</div>
+    <div>
+      <div class="weather-pill" id="weatherBox">-- °C</div>
     </div>
   </div>
 </div>
@@ -158,10 +143,10 @@ body::before{content:'';position:fixed;top:0;left:0;right:0;bottom:0;background:
 </div>
 
 <div class="section-label">// VAZIFALAR</div>
-<div class="task-list" id="taskList"><div style="color:var(--muted);padding:16px;font-family:'Share Tech Mono',monospace;font-size:0.8rem">[ LOADING... ]</div></div>
+<div class="task-list" id="taskList"><div style="color:var(--muted);font-family:'Share Tech Mono',monospace;font-size:0.8rem;padding:14px">[ LOADING... ]</div></div>
 
 <div class="add-row">
-  <input class="add-input" id="newTask" placeholder="Yangi vazifa qo'shish... (emoji + nom)"/>
+  <input class="add-input" id="newTask" placeholder="Yangi vazifa... (emoji + nom)"/>
   <button class="add-btn" onclick="addTask()">+ ADD</button>
 </div>
 
@@ -170,194 +155,144 @@ body::before{content:'';position:fixed;top:0;left:0;right:0;bottom:0;background:
   <div class="chart-bars" id="chartBars"></div>
 </div>
 
-<div class="terminal" id="termLog">
-  <span>$</span> system ready. connecting to api...<br/>
-  <span>$</span> <span id="termStatus">initializing...</span>
+<div class="terminal">
+  <span>$</span> system ready. api: <span>https://task-menager.onrender.com</span><br/>
+  <span>$</span> status: <span id="termStatus">connecting...</span>
 </div>
 
 </div>
-
 <script>
-const API = "https://task-menager.onrender.com";
-let currentDate = todayStr();
-let tasks = [];
-let pollTimer;
+const API="https://task-menager.onrender.com";
+let currentDate=todayStr(),tasks=[],pollTimer;
 
 function todayStr(){return new Date().toISOString().split("T")[0]}
-
 function formatDate(d){
-  const dt = new Date(d);
+  const dt=new Date(d);
   const days=["Yakshanba","Dushanba","Seshanba","Chorshanba","Payshanba","Juma","Shanba"];
   const months=["01","02","03","04","05","06","07","08","09","10","11","12"];
   return `${days[dt.getDay()]} ${dt.getDate()}.${months[dt.getMonth()]}.${dt.getFullYear()}`;
 }
 
-function termLog(msg){
-  const el = document.getElementById("termStatus");
-  if(el) el.textContent = msg;
-}
-
-/* Clock */
 function updateClock(){
-  const now = new Date();
-  const h = now.getHours(), m = now.getMinutes(), s = now.getSeconds();
-  const pad = n => String(n).padStart(2,"0");
-
-  document.getElementById("digitalClock").textContent = `${pad(h)}:${pad(m)}:${pad(s)}`;
-
+  const now=new Date();
+  const h=now.getHours(),m=now.getMinutes(),s=now.getSeconds();
+  const pad=n=>String(n).padStart(2,"0");
+  document.getElementById("digitalClock").textContent=`${pad(h)}:${pad(m)}:${pad(s)}`;
   const months=["Yanvar","Fevral","Mart","Aprel","May","Iyun","Iyul","Avgust","Sentabr","Oktabr","Noyabr","Dekabr"];
   const days=["Yak","Dush","Sesh","Chor","Pay","Juma","Shan"];
-  const now2 = new Date();
-  document.getElementById("clockDate").textContent = `${days[now2.getDay()]} ${now2.getDate()} ${months[now2.getMonth()]}`;
-
-  const hAngle = ((h%12)+m/60)*30;
-  const mAngle = (m+s/60)*6;
-  const sAngle = s*6;
-  const rot = a => `rotate(${a} 40 40)`;
-
-  document.getElementById("hourHand").setAttribute("transform", rot(hAngle));
-  document.getElementById("minHand").setAttribute("transform", rot(mAngle));
-  document.getElementById("secHand").setAttribute("transform", rot(sAngle));
-
-  const circ = 2*Math.PI*34;
-  const offset = circ - (s/60)*circ;
-  document.getElementById("secArc").setAttribute("stroke-dashoffset", offset.toFixed(1));
+  document.getElementById("clockDate").textContent=`${days[now.getDay()]}, ${now.getDate()} ${months[now.getMonth()]} ${now.getFullYear()}`;
+  const cx=45,cy=45;
+  const hAngle=((h%12)+m/60)*30-90;
+  const mAngle=(m+s/60)*6-90;
+  const sAngle=s*6-90;
+  const toXY=(angle,len)=>({x:cx+len*Math.cos(angle*Math.PI/180),y:cy+len*Math.sin(angle*Math.PI/180)});
+  const hP=toXY(hAngle,22),mP=toXY(mAngle,30),sP=toXY(sAngle,32);
+  document.getElementById("hourHand").setAttribute("x2",hP.x);
+  document.getElementById("hourHand").setAttribute("y2",hP.y);
+  document.getElementById("minHand").setAttribute("x2",mP.x);
+  document.getElementById("minHand").setAttribute("y2",mP.y);
+  document.getElementById("secHand").setAttribute("x2",sP.x);
+  document.getElementById("secHand").setAttribute("y2",sP.y);
+  const circ=2*Math.PI*40;
+  document.getElementById("secArc").setAttribute("stroke-dashoffset",(circ-(s/60)*circ).toFixed(1));
 }
-setInterval(updateClock, 1000);
-updateClock();
+setInterval(updateClock,1000);updateClock();
 
-/* Weather */
 async function loadWeather(){
   try{
-    const r = await fetch("https://api.open-meteo.com/v1/forecast?latitude=41.3&longitude=69.27&current_weather=true");
-    const d = await r.json();
-    const temp = Math.round(d.current_weather.temperature);
-    const code = d.current_weather.weathercode;
-    const icon = code<=1?"☀️":code<=3?"⛅":code<=67?"🌧️":"❄️";
-    document.getElementById("weatherWrap").innerHTML = `<div class="weather-pill">${icon} ${temp}°C<br/><span style="font-size:0.65rem;color:var(--muted)">Toshkent</span></div>`;
-  } catch(e){
-    document.getElementById("weatherWrap").innerHTML = `<div class="weather-pill">-- °C</div>`;
-  }
+    const r=await fetch("https://api.open-meteo.com/v1/forecast?latitude=41.3&longitude=69.27&current_weather=true");
+    const d=await r.json();
+    const temp=Math.round(d.current_weather.temperature);
+    const code=d.current_weather.weathercode;
+    const icon=code<=1?"☀️":code<=3?"⛅":code<=67?"🌧️":"❄️";
+    document.getElementById("weatherBox").innerHTML=`${icon} ${temp}°C<br><span style="font-size:0.65rem;color:var(--muted)">Toshkent</span>`;
+  }catch(e){}
 }
-loadWeather();
-setInterval(loadWeather, 600000);
+loadWeather();setInterval(loadWeather,600000);
 
-/* Date nav */
 function changeDate(d){
-  const dt = new Date(currentDate);
-  dt.setDate(dt.getDate()+d);
-  const next = dt.toISOString().split("T")[0];
-  if(next <= todayStr()){currentDate=next;loadAll()}
+  const dt=new Date(currentDate);dt.setDate(dt.getDate()+d);
+  const next=dt.toISOString().split("T")[0];
+  if(next<=todayStr()){currentDate=next;loadAll();}
 }
 
-/* Load all */
 async function loadAll(){
-  document.getElementById("dateLabel").textContent = formatDate(currentDate);
-  await loadTasks();
-  await loadStats();
-  await loadChart();
+  document.getElementById("dateLabel").textContent=formatDate(currentDate);
+  await loadTasks();await loadStats();await loadChart();
 }
 
 async function loadTasks(){
   try{
-    const r = await fetch(`${API}/logs/${currentDate}`);
-    tasks = await r.json();
-    renderTasks();
-    termLog(`api connected. ${tasks.length} tasks loaded.`);
-  } catch(e){
-    document.getElementById("taskList").innerHTML = `<div style="color:var(--red);font-family:'Share Tech Mono',monospace;font-size:0.8rem;padding:16px">[ ERROR ] API ulanmadi. Render ishlab turganini tekshiring.</div>`;
-    termLog("connection failed. retrying...");
+    const r=await fetch(`${API}/logs/${currentDate}`);
+    tasks=await r.json();renderTasks();
+    document.getElementById("termStatus").textContent=`connected. ${tasks.length} tasks loaded.`;
+  }catch(e){
+    document.getElementById("taskList").innerHTML=`<div style="color:var(--red);font-family:'Share Tech Mono',monospace;font-size:0.78rem;padding:14px">[ ERROR ] API ulanmadi!</div>`;
+    document.getElementById("termStatus").textContent="connection failed!";
   }
 }
 
 function renderTasks(){
-  const done = tasks.filter(t=>t.completed).length;
-  const total = tasks.length;
-  const pct = total ? Math.round((done/total)*100) : 0;
-
-  document.getElementById("doneVal").textContent = done;
-  document.getElementById("totalVal").textContent = total;
-  document.getElementById("progressPct").textContent = pct+"%";
-  document.getElementById("progressBar").style.width = pct+"%";
-
-  const list = document.getElementById("taskList");
-  if(!tasks.length){
-    list.innerHTML = `<div style="color:var(--muted);font-family:'Share Tech Mono',monospace;font-size:0.8rem;padding:16px">[ EMPTY ] Vazifa yo'q. Qo'shing!</div>`;
-    return;
-  }
-  list.innerHTML = tasks.map(t=>`
-    <div class="task ${t.completed?'done':''}" onclick="toggle(${t.task_id})">
-      <div class="task-icon">${t.icon}</div>
-      <div class="task-name">${t.name}</div>
-      <div class="check">${t.completed?'OK':''}</div>
-    </div>`).join("");
+  const done=tasks.filter(t=>t.completed).length,total=tasks.length;
+  const pct=total?Math.round((done/total)*100):0;
+  document.getElementById("doneVal").textContent=done;
+  document.getElementById("totalVal").textContent=total;
+  document.getElementById("progressPct").textContent=pct+"%";
+  document.getElementById("progressBar").style.width=pct+"%";
+  const list=document.getElementById("taskList");
+  if(!tasks.length){list.innerHTML=`<div style="color:var(--muted);font-family:'Share Tech Mono',monospace;font-size:0.78rem;padding:14px">[ EMPTY ] Vazifa yo'q!</div>`;return;}
+  list.innerHTML=tasks.map(t=>`<div class="task ${t.completed?'done':''}" onclick="toggle(${t.task_id})"><div class="task-icon">${t.icon}</div><div class="task-name">${t.name}</div><div class="check">${t.completed?'OK':''}</div></div>`).join("");
 }
 
 async function toggle(id){
-  const t = tasks.find(x=>x.task_id===id);
-  if(!t) return;
-  t.completed = !t.completed;
-  renderTasks();
+  const t=tasks.find(x=>x.task_id===id);if(!t)return;
+  t.completed=!t.completed;renderTasks();
   await fetch(`${API}/logs`,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({task_id:id,date:currentDate,completed:t.completed})});
   await loadStats();
 }
 
 async function addTask(){
-  const input = document.getElementById("newTask");
-  const name = input.value.trim();
-  if(!name) return;
-  const emojiMatch = name.match(/\p{Emoji}/u);
-  const icon = emojiMatch ? emojiMatch[0] : "📌";
-  const cleanName = name.replace(/\p{Emoji}/gu,"").trim();
+  const input=document.getElementById("newTask"),name=input.value.trim();if(!name)return;
+  const emojiMatch=name.match(/\p{Emoji}/u);
+  const icon=emojiMatch?emojiMatch[0]:"📌";
+  const cleanName=name.replace(/\p{Emoji}/gu,"").trim();
   await fetch(`${API}/tasks`,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({name:cleanName,category:"custom",icon})});
-  input.value="";
-  await loadTasks();
+  input.value="";await loadTasks();
 }
 
 async function loadStats(){
   try{
-    const r = await fetch(`${API}/stats`);
-    const d = await r.json();
-    document.getElementById("streakVal").textContent = d.streak;
-    const ticker = document.querySelector(".ticker-inner");
-    if(ticker) ticker.textContent = `[ SYSTEM ACTIVE ] \u00a0\u00a0 IELTS PREP: ON \u00a0\u00a0 KALI LINUX: LEARNING \u00a0\u00a0 STREAK: ${d.streak} KUN \u00a0\u00a0 STAY FOCUSED \u00a0\u00a0 CONSISTENCY IS KEY \u00a0\u00a0 [ SYSTEM ACTIVE ] \u00a0\u00a0`;
-  } catch(e){}
+    const r=await fetch(`${API}/stats`),d=await r.json();
+    document.getElementById("streakVal").textContent=d.streak;
+    document.getElementById("tickerText").textContent=`[ SYSTEM ACTIVE ] \u00a0 IELTS PREP: ON \u00a0 KALI LINUX: LEARNING \u00a0 STREAK: ${d.streak} KUN \u00a0 STAY FOCUSED \u00a0 CONSISTENCY IS KEY \u00a0 [ SYSTEM ACTIVE ] \u00a0`;
+  }catch(e){}
 }
 
 async function loadChart(){
   try{
-    const r = await fetch(`${API}/stats`);
-    const d = await r.json();
-    const daily = d.daily.slice(0,7).reverse();
-    const bars = document.getElementById("chartBars");
-    bars.innerHTML = daily.map(x=>{
-      const pct = x.total ? x.done/x.total : 0;
-      const h = Math.round(pct*62)+4;
-      const col = pct===1?"#00ff41":pct>0.5?"#00cc33":"#ff3333";
-      const lbl = x.date.slice(5);
-      return `<div class="bar-wrap"><div class="bar-item" style="height:${h}px;background:${col}"></div><div class="bar-lbl">${lbl}</div></div>`;
+    const r=await fetch(`${API}/stats`),d=await r.json();
+    const daily=d.daily.slice(0,7).reverse();
+    document.getElementById("chartBars").innerHTML=daily.map(x=>{
+      const pct=x.total?x.done/x.total:0;
+      const h=Math.round(pct*62)+4;
+      const col=pct===1?"#00ff41":pct>0.5?"#00cc33":"#ff3333";
+      return `<div class="bar-wrap"><div class="bar-item" style="height:${h}px;background:${col}"></div><div class="bar-lbl">${x.date.slice(5)}</div></div>`;
     }).join("");
-  } catch(e){}
+  }catch(e){}
 }
 
-/* Real-time polling — har 5 sekundda yangilaydi */
 function startPolling(){
   clearInterval(pollTimer);
-  pollTimer = setInterval(async()=>{
-    if(currentDate === todayStr()){
-      const r = await fetch(`${API}/logs/${currentDate}`).catch(()=>null);
-      if(!r) return;
-      const newTasks = await r.json();
-      const changed = JSON.stringify(newTasks) !== JSON.stringify(tasks);
-      if(changed){tasks=newTasks;renderTasks();await loadStats();}
-    }
-  }, 5000);
+  pollTimer=setInterval(async()=>{
+    if(currentDate!==todayStr())return;
+    const r=await fetch(`${API}/logs/${currentDate}`).catch(()=>null);if(!r)return;
+    const newTasks=await r.json();
+    if(JSON.stringify(newTasks)!==JSON.stringify(tasks)){tasks=newTasks;renderTasks();await loadStats();}
+  },5000);
 }
 
-document.getElementById("newTask").addEventListener("keydown",e=>{if(e.key==="Enter")addTask()});
-
-loadAll();
-startPolling();
+document.getElementById("newTask").addEventListener("keydown",e=>{if(e.key==="Enter")addTask();});
+loadAll();startPolling();
 </script>
 </body>
 </html>
