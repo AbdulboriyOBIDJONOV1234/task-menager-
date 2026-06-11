@@ -1,4 +1,3 @@
-<!DOCTYPE html>
 <html lang="uz">
 <head>
   <meta charset="UTF-8" />
@@ -404,14 +403,14 @@
   <!-- Config hint -->
   <div class="config-card">
     🔧 <strong>API ulash:</strong> Yuqorida <code>API_URL</code> ni o'zingizning Railway URL ga almashtiring.<br/>
-    Fayl: <code>app.js</code> ichida <code>const API_URL = "https://task-menager.onrender.com"</code>
+    Fayl: <code>app.js</code> ichida <code>const API_URL = "https://your-app.railway.app"</code>
   </div>
 
 </div>
 
 <script>
   // ── CONFIG ──────────────────────────────────────────────────
-  const API_URL = "https://task-menager.onrender.com"; // Railway URL shu yerga
+  const API_URL = "https://your-app.railway.app"; // Railway URL shu yerga
   // ────────────────────────────────────────────────────────────
 
   let currentDate = todayStr();
