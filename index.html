@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Life Tracker — Abdulboriy</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --bg: #0f1117;
+      --surface: #1a1d27;
+      --surface2: #22263a;
+      --accent: #6c63ff;
+      --accent2: #ff6584;
+      --green: #43e97b;
+      --yellow: #f9ca24;
+      --text: #e8eaf6;
+      --muted: #6b7280;
+      --border: #2a2d3e;
+      --radius: 14px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      min-height: 100vh;
+      padding: 24px 16px 60px;
+    }
+
+    header {
+      max-width: 720px;
+      margin: 0 auto 32px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.4rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .date-pill {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 99px;
+      padding: 6px 16px;
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+
+    .main {
+      max-width: 720px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    /* Streak + Progress Cards */
+    .stats-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 12px;
+    }
+
+    .stat-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 18px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .stat-card .icon { font-size: 1.4rem; }
+    .stat-card .value {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: var(--text);
+    }
+    .stat-card .label { font-size: 0.78rem; color: var(--muted); }
+
+    /* Progress bar */
+    .progress-wrap {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+    }
+
+    .progress-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 14px;
+    }
+
+    .progress-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1rem;
+      font-weight: 600;
+    }
+
+    .progress-pct {
+      font-size: 0.9rem;
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    .bar-bg {
+      background: var(--surface2);
+      border-radius: 99px;
+      height: 10px;
+      overflow: hidden;
+    }
+
+    .bar-fill {
+      height: 100%;
+      border-radius: 99px;
+      background: linear-gradient(90deg, var(--accent), var(--green));
+      transition: width 0.6s cubic-bezier(.4,0,.2,1);
+    }
+
+    /* Tasks */
+    .section-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 4px;
+    }
+
+    .task-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .task-item {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 14px 18px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      cursor: pointer;
+      transition: all 0.2s;
+      user-select: none;
+    }
+
+    .task-item:hover { border-color: var(--accent); background: var(--surface2); }
+
+    .task-item.done {
+      border-color: var(--green);
+      background: rgba(67,233,123,0.06);
+    }
+
+    .task-icon { font-size: 1.3rem; width: 28px; text-align: center; }
+
+    .task-name {
+      flex: 1;
+      font-size: 0.95rem;
+      font-weight: 500;
+    }
+
+    .task-item.done .task-name {
+      text-decoration: line-through;
+      color: var(--muted);
+    }
+
+    .check {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      border: 2px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.8rem;
+      transition: all 0.2s;
+      flex-shrink: 0;
+    }
+
+    .task-item.done .check {
+      background: var(--green);
+      border-color: var(--green);
+      color: #000;
+    }
+
+    /* Date Nav */
+    .date-nav {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      justify-content: center;
+    }
+
+    .date-nav button {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text);
+      padding: 8px 14px;
+      cursor: pointer;
+      font-size: 1rem;
+      transition: all 0.15s;
+    }
+
+    .date-nav button:hover { background: var(--surface2); border-color: var(--accent); }
+
+    .current-date {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1rem;
+      font-weight: 600;
+      min-width: 160px;
+      text-align: center;
+    }
+
+    /* Weekly Chart */
+    .chart-wrap {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+    }
+
+    .chart-bars {
+      display: flex;
+      align-items: flex-end;
+      gap: 6px;
+      height: 80px;
+      margin-top: 14px;
+    }
+
+    .chart-bar-wrap {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      height: 100%;
+      justify-content: flex-end;
+    }
+
+    .chart-bar {
+      width: 100%;
+      border-radius: 6px 6px 0 0;
+      background: linear-gradient(180deg, var(--accent), #4a43cc);
+      transition: height 0.5s cubic-bezier(.4,0,.2,1);
+      min-height: 4px;
+    }
+
+    .chart-label {
+      font-size: 0.68rem;
+      color: var(--muted);
+    }
+
+    /* Add Task */
+    .add-wrap {
+      display: flex;
+      gap: 10px;
+    }
+
+    .add-input {
+      flex: 1;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      color: var(--text);
+      padding: 12px 16px;
+      font-size: 0.9rem;
+      outline: none;
+      font-family: 'Inter', sans-serif;
+      transition: border-color 0.2s;
+    }
+
+    .add-input:focus { border-color: var(--accent); }
+    .add-input::placeholder { color: var(--muted); }
+
+    .add-btn {
+      background: var(--accent);
+      border: none;
+      border-radius: 10px;
+      color: #fff;
+      padding: 12px 20px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: opacity 0.15s;
+    }
+
+    .add-btn:hover { opacity: 0.85; }
+
+    /* Config hint */
+    .config-card {
+      background: rgba(108,99,255,0.08);
+      border: 1px solid rgba(108,99,255,0.25);
+      border-radius: var(--radius);
+      padding: 16px 20px;
+      font-size: 0.85rem;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    .config-card code {
+      background: var(--surface2);
+      padding: 2px 8px;
+      border-radius: 4px;
+      color: var(--accent);
+      font-size: 0.82rem;
+    }
+
+    @media (max-width: 500px) {
+      .stats-row { grid-template-columns: 1fr 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="logo">⚡ LifeTracker</div>
+  <div class="date-pill" id="clock">--:--</div>
+</header>
+
+<div class="main">
+
+  <!-- Date Navigation -->
+  <div class="date-nav">
+    <button onclick="changeDate(-1)">←</button>
+    <div class="current-date" id="currentDateLabel">—</div>
+    <button onclick="changeDate(1)">→</button>
+  </div>
+
+  <!-- Stats Row -->
+  <div class="stats-row">
+    <div class="stat-card">
+      <div class="icon">🔥</div>
+      <div class="value" id="streakVal">0</div>
+      <div class="label">Kun streak</div>
+    </div>
+    <div class="stat-card">
+      <div class="icon">✅</div>
+      <div class="value" id="doneVal">0</div>
+      <div class="label">Bugun bajarildi</div>
+    </div>
+    <div class="stat-card">
+      <div class="icon">📋</div>
+      <div class="value" id="totalVal">0</div>
+      <div class="label">Jami vazifa</div>
+    </div>
+  </div>
+
+  <!-- Progress -->
+  <div class="progress-wrap">
+    <div class="progress-header">
+      <div class="progress-title">Bugungi progress</div>
+      <div class="progress-pct" id="progressPct">0%</div>
+    </div>
+    <div class="bar-bg">
+      <div class="bar-fill" id="progressBar" style="width:0%"></div>
+    </div>
+  </div>
+
+  <!-- Tasks -->
+  <div>
+    <div class="section-title">Vazifalar</div>
+    <div class="task-list" id="taskList">
+      <div style="color:var(--muted);padding:20px;text-align:center">Yuklanmoqda...</div>
+    </div>
+  </div>
+
+  <!-- Add Task -->
+  <div>
+    <div class="section-title" style="margin-bottom:10px">Yangi vazifa qo'shish</div>
+    <div class="add-wrap">
+      <input class="add-input" id="newTaskName" placeholder="Masalan: Suv ichish 💧" />
+      <button class="add-btn" onclick="addTask()">+ Qo'sh</button>
+    </div>
+  </div>
+
+  <!-- Weekly Chart -->
+  <div class="chart-wrap">
+    <div class="progress-header">
+      <div class="progress-title">So'nggi 7 kun</div>
+    </div>
+    <div class="chart-bars" id="chartBars">
+      <div style="color:var(--muted);font-size:0.85rem">Yuklanmoqda...</div>
+    </div>
+  </div>
+
+  <!-- Config hint -->
+  <div class="config-card">
+    🔧 <strong>API ulash:</strong> Yuqorida <code>API_URL</code> ni o'zingizning Railway URL ga almashtiring.<br/>
+    Fayl: <code>app.js</code> ichida <code>const API_URL = "https://your-app.railway.app"</code>
+  </div>
+
+</div>
+
+<script>
+  // ── CONFIG ──────────────────────────────────────────────────
+  const API_URL = "https://your-app.railway.app"; // Railway URL shu yerga
+  // ────────────────────────────────────────────────────────────
+
+  let currentDate = todayStr();
+  let tasks = [];
+
+  function todayStr() {
+    return new Date().toISOString().split("T")[0];
+  }
+
+  function formatDateUz(dateStr) {
+    const d = new Date(dateStr);
+    const days = ["Yakshanba","Dushanba","Seshanba","Chorshanba","Payshanba","Juma","Shanba"];
+    const months = ["Yanvar","Fevral","Mart","Aprel","May","Iyun","Iyul","Avgust","Sentabr","Oktabr","Noyabr","Dekabr"];
+    return `${days[d.getDay()]}, ${d.getDate()} ${months[d.getMonth()]}`;
+  }
+
+  function updateClock() {
+    const now = new Date();
+    document.getElementById("clock").textContent =
+      now.toLocaleTimeString("uz-UZ", { hour: "2-digit", minute: "2-digit" });
+  }
+
+  setInterval(updateClock, 1000);
+  updateClock();
+
+  function changeDate(delta) {
+    const d = new Date(currentDate);
+    d.setDate(d.getDate() + delta);
+    const next = d.toISOString().split("T")[0];
+    if (next <= todayStr()) {
+      currentDate = next;
+      loadAll();
+    }
+  }
+
+  async function loadAll() {
+    document.getElementById("currentDateLabel").textContent = formatDateUz(currentDate);
+    await loadTasks();
+    await loadStats();
+    await loadChart();
+  }
+
+  async function loadTasks() {
+    try {
+      const res = await fetch(`${API_URL}/logs/${currentDate}`);
+      tasks = await res.json();
+      renderTasks();
+    } catch {
+      document.getElementById("taskList").innerHTML =
+        `<div style="color:var(--accent2);padding:20px;text-align:center">⚠️ API ga ulanmadi. Railway URL ni tekshiring.</div>`;
+    }
+  }
+
+  function renderTasks() {
+    const done = tasks.filter(t => t.completed).length;
+    const total = tasks.length;
+    const pct = total ? Math.round((done / total) * 100) : 0;
+
+    document.getElementById("doneVal").textContent = done;
+    document.getElementById("totalVal").textContent = total;
+    document.getElementById("progressPct").textContent = pct + "%";
+    document.getElementById("progressBar").style.width = pct + "%";
+
+    const list = document.getElementById("taskList");
+    if (!tasks.length) {
+      list.innerHTML = `<div style="color:var(--muted);padding:20px;text-align:center">Hozircha vazifa yo'q. Qo'shing! 👆</div>`;
+      return;
+    }
+
+    list.innerHTML = tasks.map(t => `
+      <div class="task-item ${t.completed ? 'done' : ''}" onclick="toggleTask(${t.task_id})">
+        <div class="task-icon">${t.icon}</div>
+        <div class="task-name">${t.name}</div>
+        <div class="check">${t.completed ? '✓' : ''}</div>
+      </div>
+    `).join("");
+  }
+
+  async function toggleTask(taskId) {
+    const task = tasks.find(t => t.task_id === taskId);
+    if (!task) return;
+    const newVal = !task.completed;
+    task.completed = newVal;
+    renderTasks();
+
+    await fetch(`${API_URL}/logs`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ task_id: taskId, date: currentDate, completed: newVal })
+    });
+
+    await loadStats();
+  }
+
+  async function addTask() {
+    const input = document.getElementById("newTaskName");
+    const name = input.value.trim();
+    if (!name) return;
+
+    // Extract emoji if present
+    const emojiMatch = name.match(/(\p{Emoji})/u);
+    const icon = emojiMatch ? emojiMatch[0] : "📌";
+
+    await fetch(`${API_URL}/tasks`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name: name.replace(/\p{Emoji}/gu, "").trim(), category: "custom", icon })
+    });
+
+    input.value = "";
+    await loadTasks();
+  }
+
+  async function loadStats() {
+    try {
+      const res = await fetch(`${API_URL}/stats`);
+      const data = await res.json();
+      document.getElementById("streakVal").textContent = data.streak;
+    } catch {}
+  }
+
+  async function loadChart() {
+    try {
+      const res = await fetch(`${API_URL}/stats`);
+      const data = await res.json();
+      const daily = data.daily.slice(0, 7).reverse();
+
+      const max = Math.max(...daily.map(d => d.total), 1);
+      const bars = document.getElementById("chartBars");
+
+      bars.innerHTML = daily.map(d => {
+        const pct = d.total ? (d.done / d.total) : 0;
+        const h = Math.round(pct * 70) + 4;
+        const label = d.date.slice(5); // MM-DD
+        const color = pct === 1
+          ? "linear-gradient(180deg, var(--green), #2ecc71)"
+          : pct > 0.5
+          ? "linear-gradient(180deg, var(--accent), #4a43cc)"
+          : "linear-gradient(180deg, var(--accent2), #cc3355)";
+        return `
+          <div class="chart-bar-wrap">
+            <div class="chart-bar" style="height:${h}px;background:${color}" title="${Math.round(pct*100)}%"></div>
+            <div class="chart-label">${label}</div>
+          </div>`;
+      }).join("");
+    } catch {}
+  }
+
+  // Enter key for add task
+  document.addEventListener("DOMContentLoaded", () => {
+    document.getElementById("newTaskName").addEventListener("keydown", e => {
+      if (e.key === "Enter") addTask();
+    });
+    loadAll();
+  });
+</script>
+</body>
+</html>
