@@ -1,572 +1,363 @@
 <!DOCTYPE html>
 <html lang="uz">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Life Tracker — Abdulboriy</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet"/>
-  <style>
-    :root {
-      --bg: #0f1117;
-      --surface: #1a1d27;
-      --surface2: #22263a;
-      --accent: #6c63ff;
-      --accent2: #ff6584;
-      --green: #43e97b;
-      --yellow: #f9ca24;
-      --text: #e8eaf6;
-      --muted: #6b7280;
-      --border: #2a2d3e;
-      --radius: 14px;
-    }
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Life Tracker — Abdulboriy</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#080b0f;
+  --surface:#0d1117;
+  --surface2:#111820;
+  --border:#1a2a1a;
+  --accent:#00ff41;
+  --accent2:#00cc33;
+  --dim:#005510;
+  --red:#ff3333;
+  --yellow:#ffcc00;
+  --text:#c8ffc8;
+  --muted:#4a7a4a;
+  --radius:8px;
+}
+body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-height:100vh;padding:16px;overflow-x:hidden}
+body::before{content:'';position:fixed;top:0;left:0;right:0;bottom:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,255,65,0.015) 2px,rgba(0,255,65,0.015) 4px);pointer-events:none;z-index:0}
+.wrap{max-width:740px;margin:0 auto;position:relative;z-index:1}
 
-    * { box-sizing: border-box; margin: 0; padding: 0; }
+/* Header */
+.header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:10px}
+.logo{font-family:'Share Tech Mono',monospace;font-size:1.1rem;color:var(--accent);letter-spacing:2px}
+.logo span{color:var(--muted)}
 
-    body {
-      background: var(--bg);
-      color: var(--text);
-      font-family: 'Inter', sans-serif;
-      min-height: 100vh;
-      padding: 24px 16px 60px;
-    }
+/* Clock */
+.clock-wrap{display:flex;align-items:center;gap:14px}
+.clock-circle{position:relative;width:80px;height:80px}
+.clock-circle svg{transform:rotate(-90deg)}
+.clock-digital{font-family:'Share Tech Mono',monospace;font-size:0.85rem;color:var(--accent);text-align:center}
+.clock-date{font-family:'Share Tech Mono',monospace;font-size:0.7rem;color:var(--muted);text-align:center;margin-top:2px}
 
-    header {
-      max-width: 720px;
-      margin: 0 auto 32px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
+/* Weather */
+.weather-pill{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:8px 14px;font-family:'Share Tech Mono',monospace;font-size:0.8rem;color:var(--accent);display:flex;align-items:center;gap:8px}
 
-    .logo {
-      font-family: 'Space Grotesk', sans-serif;
-      font-size: 1.4rem;
-      font-weight: 700;
-      background: linear-gradient(135deg, var(--accent), var(--accent2));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
+/* Stats */
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px}
+.stat{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px;text-align:center;position:relative;overflow:hidden}
+.stat::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--accent)}
+.stat-val{font-family:'Share Tech Mono',monospace;font-size:1.6rem;color:var(--accent);display:block}
+.stat-lbl{font-size:0.7rem;color:var(--muted);margin-top:4px;text-transform:uppercase;letter-spacing:1px}
 
-    .date-pill {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 99px;
-      padding: 6px 16px;
-      font-size: 0.85rem;
-      color: var(--muted);
-    }
+/* Progress */
+.progress-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:16px}
+.progress-header{display:flex;justify-content:space-between;margin-bottom:10px;font-family:'Share Tech Mono',monospace;font-size:0.8rem}
+.progress-header span:last-child{color:var(--accent)}
+.bar-bg{background:var(--dim);border-radius:2px;height:6px;overflow:hidden}
+.bar-fill{height:100%;background:var(--accent);border-radius:2px;transition:width 0.6s ease;position:relative}
+.bar-fill::after{content:'';position:absolute;right:0;top:-2px;bottom:-2px;width:3px;background:#fff;opacity:0.8;animation:blink 1s infinite}
+@keyframes blink{0%,100%{opacity:0.8}50%{opacity:0.2}}
 
-    .main {
-      max-width: 720px;
-      margin: 0 auto;
-      display: flex;
-      flex-direction: column;
-      gap: 20px;
-    }
+/* Date nav */
+.date-nav{display:flex;align-items:center;justify-content:center;gap:12px;margin-bottom:16px}
+.date-nav button{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);color:var(--accent);padding:7px 16px;cursor:pointer;font-family:'Share Tech Mono',monospace;font-size:0.9rem;transition:all 0.15s}
+.date-nav button:hover{border-color:var(--accent);background:var(--dim)}
+.date-label{font-family:'Share Tech Mono',monospace;font-size:0.85rem;color:var(--text);min-width:180px;text-align:center}
 
-    /* Streak + Progress Cards */
-    .stats-row {
-      display: grid;
-      grid-template-columns: 1fr 1fr 1fr;
-      gap: 12px;
-    }
+/* Tasks */
+.section-label{font-family:'Share Tech Mono',monospace;font-size:0.7rem;color:var(--muted);letter-spacing:2px;text-transform:uppercase;margin-bottom:10px}
+.task-list{display:flex;flex-direction:column;gap:8px;margin-bottom:16px}
+.task{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:13px 16px;display:flex;align-items:center;gap:12px;cursor:pointer;transition:all 0.2s;position:relative;overflow:hidden}
+.task::before{content:'> ';font-family:'Share Tech Mono',monospace;font-size:0.8rem;color:var(--dim)}
+.task:hover{border-color:var(--accent);background:var(--surface2)}
+.task.done{border-color:var(--accent2);background:rgba(0,255,65,0.04)}
+.task.done::before{color:var(--accent)}
+.task-icon{font-size:1.1rem;width:24px;text-align:center}
+.task-name{flex:1;font-size:0.9rem}
+.task.done .task-name{text-decoration:line-through;color:var(--muted)}
+.check{width:20px;height:20px;border:1px solid var(--muted);border-radius:2px;display:flex;align-items:center;justify-content:center;font-family:'Share Tech Mono',monospace;font-size:0.7rem;flex-shrink:0;transition:all 0.2s}
+.task.done .check{background:var(--accent);border-color:var(--accent);color:#000}
 
-    .stat-card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 18px 16px;
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-    }
+/* Add task */
+.add-row{display:flex;gap:8px;margin-bottom:16px}
+.add-input{flex:1;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);color:var(--text);padding:10px 14px;font-size:0.85rem;font-family:'Inter',sans-serif;outline:none;transition:border-color 0.2s}
+.add-input:focus{border-color:var(--accent)}
+.add-input::placeholder{color:var(--muted)}
+.add-btn{background:var(--dim);border:1px solid var(--accent);border-radius:var(--radius);color:var(--accent);padding:10px 18px;cursor:pointer;font-family:'Share Tech Mono',monospace;font-size:0.85rem;transition:all 0.15s;white-space:nowrap}
+.add-btn:hover{background:var(--accent);color:#000}
 
-    .stat-card .icon { font-size: 1.4rem; }
-    .stat-card .value {
-      font-family: 'Space Grotesk', sans-serif;
-      font-size: 1.8rem;
-      font-weight: 700;
-      color: var(--text);
-    }
-    .stat-card .label { font-size: 0.78rem; color: var(--muted); }
+/* Chart */
+.chart-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:16px}
+.chart-bars{display:flex;align-items:flex-end;gap:6px;height:70px;margin-top:12px}
+.bar-wrap{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;height:100%;justify-content:flex-end}
+.bar-item{width:100%;border-radius:2px 2px 0 0;min-height:3px;transition:height 0.5s ease}
+.bar-lbl{font-family:'Share Tech Mono',monospace;font-size:0.6rem;color:var(--muted)}
 
-    /* Progress bar */
-    .progress-wrap {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 20px;
-    }
+/* Terminal footer */
+.terminal{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:12px 16px;font-family:'Share Tech Mono',monospace;font-size:0.75rem;color:var(--muted)}
+.terminal span{color:var(--accent)}
 
-    .progress-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 14px;
-    }
+/* Scrolling text */
+.ticker{overflow:hidden;white-space:nowrap;font-family:'Share Tech Mono',monospace;font-size:0.7rem;color:var(--dim);margin-bottom:12px;border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:4px 0}
+.ticker-inner{display:inline-block;animation:scroll 20s linear infinite}
+@keyframes scroll{0%{transform:translateX(100%)}100%{transform:translateX(-100%)}}
 
-    .progress-title {
-      font-family: 'Space Grotesk', sans-serif;
-      font-size: 1rem;
-      font-weight: 600;
-    }
-
-    .progress-pct {
-      font-size: 0.9rem;
-      color: var(--accent);
-      font-weight: 600;
-    }
-
-    .bar-bg {
-      background: var(--surface2);
-      border-radius: 99px;
-      height: 10px;
-      overflow: hidden;
-    }
-
-    .bar-fill {
-      height: 100%;
-      border-radius: 99px;
-      background: linear-gradient(90deg, var(--accent), var(--green));
-      transition: width 0.6s cubic-bezier(.4,0,.2,1);
-    }
-
-    /* Tasks */
-    .section-title {
-      font-family: 'Space Grotesk', sans-serif;
-      font-size: 0.85rem;
-      font-weight: 600;
-      color: var(--muted);
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      margin-bottom: 4px;
-    }
-
-    .task-list {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-
-    .task-item {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 14px 18px;
-      display: flex;
-      align-items: center;
-      gap: 14px;
-      cursor: pointer;
-      transition: all 0.2s;
-      user-select: none;
-    }
-
-    .task-item:hover { border-color: var(--accent); background: var(--surface2); }
-
-    .task-item.done {
-      border-color: var(--green);
-      background: rgba(67,233,123,0.06);
-    }
-
-    .task-icon { font-size: 1.3rem; width: 28px; text-align: center; }
-
-    .task-name {
-      flex: 1;
-      font-size: 0.95rem;
-      font-weight: 500;
-    }
-
-    .task-item.done .task-name {
-      text-decoration: line-through;
-      color: var(--muted);
-    }
-
-    .check {
-      width: 24px;
-      height: 24px;
-      border-radius: 50%;
-      border: 2px solid var(--border);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 0.8rem;
-      transition: all 0.2s;
-      flex-shrink: 0;
-    }
-
-    .task-item.done .check {
-      background: var(--green);
-      border-color: var(--green);
-      color: #000;
-    }
-
-    /* Date Nav */
-    .date-nav {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      justify-content: center;
-    }
-
-    .date-nav button {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      color: var(--text);
-      padding: 8px 14px;
-      cursor: pointer;
-      font-size: 1rem;
-      transition: all 0.15s;
-    }
-
-    .date-nav button:hover { background: var(--surface2); border-color: var(--accent); }
-
-    .current-date {
-      font-family: 'Space Grotesk', sans-serif;
-      font-size: 1rem;
-      font-weight: 600;
-      min-width: 160px;
-      text-align: center;
-    }
-
-    /* Weekly Chart */
-    .chart-wrap {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 20px;
-    }
-
-    .chart-bars {
-      display: flex;
-      align-items: flex-end;
-      gap: 6px;
-      height: 80px;
-      margin-top: 14px;
-    }
-
-    .chart-bar-wrap {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 4px;
-      height: 100%;
-      justify-content: flex-end;
-    }
-
-    .chart-bar {
-      width: 100%;
-      border-radius: 6px 6px 0 0;
-      background: linear-gradient(180deg, var(--accent), #4a43cc);
-      transition: height 0.5s cubic-bezier(.4,0,.2,1);
-      min-height: 4px;
-    }
-
-    .chart-label {
-      font-size: 0.68rem;
-      color: var(--muted);
-    }
-
-    /* Add Task */
-    .add-wrap {
-      display: flex;
-      gap: 10px;
-    }
-
-    .add-input {
-      flex: 1;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      color: var(--text);
-      padding: 12px 16px;
-      font-size: 0.9rem;
-      outline: none;
-      font-family: 'Inter', sans-serif;
-      transition: border-color 0.2s;
-    }
-
-    .add-input:focus { border-color: var(--accent); }
-    .add-input::placeholder { color: var(--muted); }
-
-    .add-btn {
-      background: var(--accent);
-      border: none;
-      border-radius: 10px;
-      color: #fff;
-      padding: 12px 20px;
-      font-size: 0.9rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: opacity 0.15s;
-    }
-
-    .add-btn:hover { opacity: 0.85; }
-
-    /* Config hint */
-    .config-card {
-      background: rgba(108,99,255,0.08);
-      border: 1px solid rgba(108,99,255,0.25);
-      border-radius: var(--radius);
-      padding: 16px 20px;
-      font-size: 0.85rem;
-      color: var(--muted);
-      line-height: 1.6;
-    }
-
-    .config-card code {
-      background: var(--surface2);
-      padding: 2px 8px;
-      border-radius: 4px;
-      color: var(--accent);
-      font-size: 0.82rem;
-    }
-
-    @media (max-width: 500px) {
-      .stats-row { grid-template-columns: 1fr 1fr; }
-    }
-  </style>
+@media(max-width:500px){.stats{grid-template-columns:1fr 1fr}.clock-circle{width:60px;height:60px}}
+</style>
 </head>
 <body>
+<div class="wrap">
 
-<header>
-  <div class="logo">⚡ LifeTracker</div>
-  <div class="date-pill" id="clock">--:--</div>
-</header>
+<div class="ticker">
+  <span class="ticker-inner">[ SYSTEM ACTIVE ] &nbsp;&nbsp; IELTS PREP: ON &nbsp;&nbsp; KALI LINUX: LEARNING &nbsp;&nbsp; STREAK: LOADING... &nbsp;&nbsp; STAY FOCUSED &nbsp;&nbsp; CONSISTENCY IS KEY &nbsp;&nbsp; [ SYSTEM ACTIVE ] &nbsp;&nbsp;</span>
+</div>
 
-<div class="main">
-
-  <!-- Date Navigation -->
-  <div class="date-nav">
-    <button onclick="changeDate(-1)">←</button>
-    <div class="current-date" id="currentDateLabel">—</div>
-    <button onclick="changeDate(1)">→</button>
-  </div>
-
-  <!-- Stats Row -->
-  <div class="stats-row">
-    <div class="stat-card">
-      <div class="icon">🔥</div>
-      <div class="value" id="streakVal">0</div>
-      <div class="label">Kun streak</div>
-    </div>
-    <div class="stat-card">
-      <div class="icon">✅</div>
-      <div class="value" id="doneVal">0</div>
-      <div class="label">Bugun bajarildi</div>
-    </div>
-    <div class="stat-card">
-      <div class="icon">📋</div>
-      <div class="value" id="totalVal">0</div>
-      <div class="label">Jami vazifa</div>
-    </div>
-  </div>
-
-  <!-- Progress -->
-  <div class="progress-wrap">
-    <div class="progress-header">
-      <div class="progress-title">Bugungi progress</div>
-      <div class="progress-pct" id="progressPct">0%</div>
-    </div>
-    <div class="bar-bg">
-      <div class="bar-fill" id="progressBar" style="width:0%"></div>
-    </div>
-  </div>
-
-  <!-- Tasks -->
+<div class="header">
   <div>
-    <div class="section-title">Vazifalar</div>
-    <div class="task-list" id="taskList">
-      <div style="color:var(--muted);padding:20px;text-align:center">Yuklanmoqda...</div>
+    <div class="logo"><span>//</span> LIFE_TRACKER <span>v2.0</span></div>
+    <div style="font-family:'Share Tech Mono',monospace;font-size:0.65rem;color:var(--muted);margin-top:2px">abdulboriy@localhost:~$</div>
+  </div>
+  <div class="clock-wrap">
+    <div>
+      <div class="clock-circle">
+        <svg width="80" height="80" viewBox="0 0 80 80">
+          <circle cx="40" cy="40" r="34" fill="none" stroke="#1a2a1a" stroke-width="4"/>
+          <circle id="secArc" cx="40" cy="40" r="34" fill="none" stroke="#00ff41" stroke-width="2" stroke-dasharray="213.6" stroke-dashoffset="213.6" stroke-linecap="round"/>
+          <circle cx="40" cy="40" r="28" fill="none" stroke="#0d1117" stroke-width="1"/>
+          <line id="hourHand" x1="40" y1="40" x2="40" y2="18" stroke="#00ff41" stroke-width="2.5" stroke-linecap="round"/>
+          <line id="minHand" x1="40" y1="40" x2="40" y2="12" stroke="#00cc33" stroke-width="1.5" stroke-linecap="round"/>
+          <line id="secHand" x1="40" y1="40" x2="40" y2="10" stroke="#ff3333" stroke-width="1" stroke-linecap="round"/>
+          <circle cx="40" cy="40" r="2.5" fill="#00ff41"/>
+        </svg>
+      </div>
+      <div class="clock-digital" id="digitalClock">00:00:00</div>
+      <div class="clock-date" id="clockDate">---</div>
+    </div>
+    <div id="weatherWrap">
+      <div class="weather-pill">-- °C</div>
     </div>
   </div>
+</div>
 
-  <!-- Add Task -->
-  <div>
-    <div class="section-title" style="margin-bottom:10px">Yangi vazifa qo'shish</div>
-    <div class="add-wrap">
-      <input class="add-input" id="newTaskName" placeholder="Masalan: Suv ichish 💧" />
-      <button class="add-btn" onclick="addTask()">+ Qo'sh</button>
-    </div>
-  </div>
+<div class="stats">
+  <div class="stat"><span class="stat-val" id="streakVal">0</span><div class="stat-lbl">🔥 Streak</div></div>
+  <div class="stat"><span class="stat-val" id="doneVal">0</span><div class="stat-lbl">✅ Bajarildi</div></div>
+  <div class="stat"><span class="stat-val" id="totalVal">0</span><div class="stat-lbl">📋 Jami</div></div>
+</div>
 
-  <!-- Weekly Chart -->
-  <div class="chart-wrap">
-    <div class="progress-header">
-      <div class="progress-title">So'nggi 7 kun</div>
-    </div>
-    <div class="chart-bars" id="chartBars">
-      <div style="color:var(--muted);font-size:0.85rem">Yuklanmoqda...</div>
-    </div>
+<div class="progress-card">
+  <div class="progress-header">
+    <span>// BUGUNGI PROGRESS</span>
+    <span id="progressPct">0%</span>
   </div>
+  <div class="bar-bg"><div class="bar-fill" id="progressBar" style="width:0%"></div></div>
+</div>
 
-  <!-- Config hint -->
-  <div class="config-card">
-    🔧 <strong>API ulash:</strong> Yuqorida <code>API_URL</code> ni o'zingizning Railway URL ga almashtiring.<br/>
-    Fayl: <code>app.js</code> ichida <code>const API_URL = "https://task-menager.onrender.com"</code>
-  </div>
+<div class="date-nav">
+  <button onclick="changeDate(-1)">◀ PREV</button>
+  <div class="date-label" id="dateLabel">---</div>
+  <button onclick="changeDate(1)">NEXT ▶</button>
+</div>
+
+<div class="section-label">// VAZIFALAR</div>
+<div class="task-list" id="taskList"><div style="color:var(--muted);padding:16px;font-family:'Share Tech Mono',monospace;font-size:0.8rem">[ LOADING... ]</div></div>
+
+<div class="add-row">
+  <input class="add-input" id="newTask" placeholder="Yangi vazifa qo'shish... (emoji + nom)"/>
+  <button class="add-btn" onclick="addTask()">+ ADD</button>
+</div>
+
+<div class="chart-card">
+  <div class="section-label">// SO'NGGI 7 KUN</div>
+  <div class="chart-bars" id="chartBars"></div>
+</div>
+
+<div class="terminal" id="termLog">
+  <span>$</span> system ready. connecting to api...<br/>
+  <span>$</span> <span id="termStatus">initializing...</span>
+</div>
 
 </div>
 
 <script>
-  // ── CONFIG ──────────────────────────────────────────────────
-  const API_URL = "https://task-menager.onrender.com"; // Railway URL shu yerga
-  // ────────────────────────────────────────────────────────────
+const API = "https://task-menager.onrender.com";
+let currentDate = todayStr();
+let tasks = [];
+let pollTimer;
 
-  let currentDate = todayStr();
-  let tasks = [];
+function todayStr(){return new Date().toISOString().split("T")[0]}
 
-  function todayStr() {
-    return new Date().toISOString().split("T")[0];
+function formatDate(d){
+  const dt = new Date(d);
+  const days=["Yakshanba","Dushanba","Seshanba","Chorshanba","Payshanba","Juma","Shanba"];
+  const months=["01","02","03","04","05","06","07","08","09","10","11","12"];
+  return `${days[dt.getDay()]} ${dt.getDate()}.${months[dt.getMonth()]}.${dt.getFullYear()}`;
+}
+
+function termLog(msg){
+  const el = document.getElementById("termStatus");
+  if(el) el.textContent = msg;
+}
+
+/* Clock */
+function updateClock(){
+  const now = new Date();
+  const h = now.getHours(), m = now.getMinutes(), s = now.getSeconds();
+  const pad = n => String(n).padStart(2,"0");
+
+  document.getElementById("digitalClock").textContent = `${pad(h)}:${pad(m)}:${pad(s)}`;
+
+  const months=["Yanvar","Fevral","Mart","Aprel","May","Iyun","Iyul","Avgust","Sentabr","Oktabr","Noyabr","Dekabr"];
+  const days=["Yak","Dush","Sesh","Chor","Pay","Juma","Shan"];
+  const now2 = new Date();
+  document.getElementById("clockDate").textContent = `${days[now2.getDay()]} ${now2.getDate()} ${months[now2.getMonth()]}`;
+
+  const hAngle = ((h%12)+m/60)*30;
+  const mAngle = (m+s/60)*6;
+  const sAngle = s*6;
+  const rot = a => `rotate(${a} 40 40)`;
+
+  document.getElementById("hourHand").setAttribute("transform", rot(hAngle));
+  document.getElementById("minHand").setAttribute("transform", rot(mAngle));
+  document.getElementById("secHand").setAttribute("transform", rot(sAngle));
+
+  const circ = 2*Math.PI*34;
+  const offset = circ - (s/60)*circ;
+  document.getElementById("secArc").setAttribute("stroke-dashoffset", offset.toFixed(1));
+}
+setInterval(updateClock, 1000);
+updateClock();
+
+/* Weather */
+async function loadWeather(){
+  try{
+    const r = await fetch("https://api.open-meteo.com/v1/forecast?latitude=41.3&longitude=69.27&current_weather=true");
+    const d = await r.json();
+    const temp = Math.round(d.current_weather.temperature);
+    const code = d.current_weather.weathercode;
+    const icon = code<=1?"☀️":code<=3?"⛅":code<=67?"🌧️":"❄️";
+    document.getElementById("weatherWrap").innerHTML = `<div class="weather-pill">${icon} ${temp}°C<br/><span style="font-size:0.65rem;color:var(--muted)">Toshkent</span></div>`;
+  } catch(e){
+    document.getElementById("weatherWrap").innerHTML = `<div class="weather-pill">-- °C</div>`;
   }
+}
+loadWeather();
+setInterval(loadWeather, 600000);
 
-  function formatDateUz(dateStr) {
-    const d = new Date(dateStr);
-    const days = ["Yakshanba","Dushanba","Seshanba","Chorshanba","Payshanba","Juma","Shanba"];
-    const months = ["Yanvar","Fevral","Mart","Aprel","May","Iyun","Iyul","Avgust","Sentabr","Oktabr","Noyabr","Dekabr"];
-    return `${days[d.getDay()]}, ${d.getDate()} ${months[d.getMonth()]}`;
-  }
+/* Date nav */
+function changeDate(d){
+  const dt = new Date(currentDate);
+  dt.setDate(dt.getDate()+d);
+  const next = dt.toISOString().split("T")[0];
+  if(next <= todayStr()){currentDate=next;loadAll()}
+}
 
-  function updateClock() {
-    const now = new Date();
-    document.getElementById("clock").textContent =
-      now.toLocaleTimeString("uz-UZ", { hour: "2-digit", minute: "2-digit" });
-  }
+/* Load all */
+async function loadAll(){
+  document.getElementById("dateLabel").textContent = formatDate(currentDate);
+  await loadTasks();
+  await loadStats();
+  await loadChart();
+}
 
-  setInterval(updateClock, 1000);
-  updateClock();
-
-  function changeDate(delta) {
-    const d = new Date(currentDate);
-    d.setDate(d.getDate() + delta);
-    const next = d.toISOString().split("T")[0];
-    if (next <= todayStr()) {
-      currentDate = next;
-      loadAll();
-    }
-  }
-
-  async function loadAll() {
-    document.getElementById("currentDateLabel").textContent = formatDateUz(currentDate);
-    await loadTasks();
-    await loadStats();
-    await loadChart();
-  }
-
-  async function loadTasks() {
-    try {
-      const res = await fetch(`${API_URL}/logs/${currentDate}`);
-      tasks = await res.json();
-      renderTasks();
-    } catch {
-      document.getElementById("taskList").innerHTML =
-        `<div style="color:var(--accent2);padding:20px;text-align:center">⚠️ API ga ulanmadi. Railway URL ni tekshiring.</div>`;
-    }
-  }
-
-  function renderTasks() {
-    const done = tasks.filter(t => t.completed).length;
-    const total = tasks.length;
-    const pct = total ? Math.round((done / total) * 100) : 0;
-
-    document.getElementById("doneVal").textContent = done;
-    document.getElementById("totalVal").textContent = total;
-    document.getElementById("progressPct").textContent = pct + "%";
-    document.getElementById("progressBar").style.width = pct + "%";
-
-    const list = document.getElementById("taskList");
-    if (!tasks.length) {
-      list.innerHTML = `<div style="color:var(--muted);padding:20px;text-align:center">Hozircha vazifa yo'q. Qo'shing! 👆</div>`;
-      return;
-    }
-
-    list.innerHTML = tasks.map(t => `
-      <div class="task-item ${t.completed ? 'done' : ''}" onclick="toggleTask(${t.task_id})">
-        <div class="task-icon">${t.icon}</div>
-        <div class="task-name">${t.name}</div>
-        <div class="check">${t.completed ? '✓' : ''}</div>
-      </div>
-    `).join("");
-  }
-
-  async function toggleTask(taskId) {
-    const task = tasks.find(t => t.task_id === taskId);
-    if (!task) return;
-    const newVal = !task.completed;
-    task.completed = newVal;
+async function loadTasks(){
+  try{
+    const r = await fetch(`${API}/logs/${currentDate}`);
+    tasks = await r.json();
     renderTasks();
-
-    await fetch(`${API_URL}/logs`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ task_id: taskId, date: currentDate, completed: newVal })
-    });
-
-    await loadStats();
+    termLog(`api connected. ${tasks.length} tasks loaded.`);
+  } catch(e){
+    document.getElementById("taskList").innerHTML = `<div style="color:var(--red);font-family:'Share Tech Mono',monospace;font-size:0.8rem;padding:16px">[ ERROR ] API ulanmadi. Render ishlab turganini tekshiring.</div>`;
+    termLog("connection failed. retrying...");
   }
+}
 
-  async function addTask() {
-    const input = document.getElementById("newTaskName");
-    const name = input.value.trim();
-    if (!name) return;
+function renderTasks(){
+  const done = tasks.filter(t=>t.completed).length;
+  const total = tasks.length;
+  const pct = total ? Math.round((done/total)*100) : 0;
 
-    // Extract emoji if present
-    const emojiMatch = name.match(/(\p{Emoji})/u);
-    const icon = emojiMatch ? emojiMatch[0] : "📌";
+  document.getElementById("doneVal").textContent = done;
+  document.getElementById("totalVal").textContent = total;
+  document.getElementById("progressPct").textContent = pct+"%";
+  document.getElementById("progressBar").style.width = pct+"%";
 
-    await fetch(`${API_URL}/tasks`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ name: name.replace(/\p{Emoji}/gu, "").trim(), category: "custom", icon })
-    });
-
-    input.value = "";
-    await loadTasks();
+  const list = document.getElementById("taskList");
+  if(!tasks.length){
+    list.innerHTML = `<div style="color:var(--muted);font-family:'Share Tech Mono',monospace;font-size:0.8rem;padding:16px">[ EMPTY ] Vazifa yo'q. Qo'shing!</div>`;
+    return;
   }
+  list.innerHTML = tasks.map(t=>`
+    <div class="task ${t.completed?'done':''}" onclick="toggle(${t.task_id})">
+      <div class="task-icon">${t.icon}</div>
+      <div class="task-name">${t.name}</div>
+      <div class="check">${t.completed?'OK':''}</div>
+    </div>`).join("");
+}
 
-  async function loadStats() {
-    try {
-      const res = await fetch(`${API_URL}/stats`);
-      const data = await res.json();
-      document.getElementById("streakVal").textContent = data.streak;
-    } catch {}
-  }
+async function toggle(id){
+  const t = tasks.find(x=>x.task_id===id);
+  if(!t) return;
+  t.completed = !t.completed;
+  renderTasks();
+  await fetch(`${API}/logs`,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({task_id:id,date:currentDate,completed:t.completed})});
+  await loadStats();
+}
 
-  async function loadChart() {
-    try {
-      const res = await fetch(`${API_URL}/stats`);
-      const data = await res.json();
-      const daily = data.daily.slice(0, 7).reverse();
+async function addTask(){
+  const input = document.getElementById("newTask");
+  const name = input.value.trim();
+  if(!name) return;
+  const emojiMatch = name.match(/\p{Emoji}/u);
+  const icon = emojiMatch ? emojiMatch[0] : "📌";
+  const cleanName = name.replace(/\p{Emoji}/gu,"").trim();
+  await fetch(`${API}/tasks`,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({name:cleanName,category:"custom",icon})});
+  input.value="";
+  await loadTasks();
+}
 
-      const max = Math.max(...daily.map(d => d.total), 1);
-      const bars = document.getElementById("chartBars");
+async function loadStats(){
+  try{
+    const r = await fetch(`${API}/stats`);
+    const d = await r.json();
+    document.getElementById("streakVal").textContent = d.streak;
+    const ticker = document.querySelector(".ticker-inner");
+    if(ticker) ticker.textContent = `[ SYSTEM ACTIVE ] \u00a0\u00a0 IELTS PREP: ON \u00a0\u00a0 KALI LINUX: LEARNING \u00a0\u00a0 STREAK: ${d.streak} KUN \u00a0\u00a0 STAY FOCUSED \u00a0\u00a0 CONSISTENCY IS KEY \u00a0\u00a0 [ SYSTEM ACTIVE ] \u00a0\u00a0`;
+  } catch(e){}
+}
 
-      bars.innerHTML = daily.map(d => {
-        const pct = d.total ? (d.done / d.total) : 0;
-        const h = Math.round(pct * 70) + 4;
-        const label = d.date.slice(5); // MM-DD
-        const color = pct === 1
-          ? "linear-gradient(180deg, var(--green), #2ecc71)"
-          : pct > 0.5
-          ? "linear-gradient(180deg, var(--accent), #4a43cc)"
-          : "linear-gradient(180deg, var(--accent2), #cc3355)";
-        return `
-          <div class="chart-bar-wrap">
-            <div class="chart-bar" style="height:${h}px;background:${color}" title="${Math.round(pct*100)}%"></div>
-            <div class="chart-label">${label}</div>
-          </div>`;
-      }).join("");
-    } catch {}
-  }
+async function loadChart(){
+  try{
+    const r = await fetch(`${API}/stats`);
+    const d = await r.json();
+    const daily = d.daily.slice(0,7).reverse();
+    const bars = document.getElementById("chartBars");
+    bars.innerHTML = daily.map(x=>{
+      const pct = x.total ? x.done/x.total : 0;
+      const h = Math.round(pct*62)+4;
+      const col = pct===1?"#00ff41":pct>0.5?"#00cc33":"#ff3333";
+      const lbl = x.date.slice(5);
+      return `<div class="bar-wrap"><div class="bar-item" style="height:${h}px;background:${col}"></div><div class="bar-lbl">${lbl}</div></div>`;
+    }).join("");
+  } catch(e){}
+}
 
-  // Enter key for add task
-  document.addEventListener("DOMContentLoaded", () => {
-    document.getElementById("newTaskName").addEventListener("keydown", e => {
-      if (e.key === "Enter") addTask();
-    });
-    loadAll();
-  });
+/* Real-time polling — har 5 sekundda yangilaydi */
+function startPolling(){
+  clearInterval(pollTimer);
+  pollTimer = setInterval(async()=>{
+    if(currentDate === todayStr()){
+      const r = await fetch(`${API}/logs/${currentDate}`).catch(()=>null);
+      if(!r) return;
+      const newTasks = await r.json();
+      const changed = JSON.stringify(newTasks) !== JSON.stringify(tasks);
+      if(changed){tasks=newTasks;renderTasks();await loadStats();}
+    }
+  }, 5000);
+}
+
+document.getElementById("newTask").addEventListener("keydown",e=>{if(e.key==="Enter")addTask()});
+
+loadAll();
+startPolling();
 </script>
 </body>
 </html>
