@@ -170,3 +170,20 @@ def run_bot():
 
 bot_thread = threading.Thread(target=run_bot, daemon=True)
 bot_thread.start()
+
+@app.get("/weather")
+async def get_weather():
+    import httpx
+    try:
+        async with httpx.AsyncClient() as client:
+            r = await client.get(
+                "https://api.open-meteo.com/v1/forecast?latitude=41.3&longitude=69.27&current_weather=true",
+                timeout=5
+            )
+            d = r.json()
+            temp = round(d["current_weather"]["temperature"])
+            code = d["current_weather"]["weathercode"]
+            icon = "☀️" if code<=1 else "⛅" if code<=3 else "🌧️" if code<=67 else "❄️"
+            return {"temp": temp, "icon": icon, "city": "Toshkent"}
+    except:
+        return {"temp": "--", "icon": "🌡️", "city": "Toshkent"}
