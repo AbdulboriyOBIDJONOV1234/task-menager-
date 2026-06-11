@@ -4,6 +4,7 @@ from pydantic import BaseModel
 from datetime import date, datetime
 import sqlite3
 import os
+import threading
 
 app = FastAPI(title="Life Tracker - Abdulboriy")
 
@@ -16,7 +17,6 @@ app.add_middleware(
 
 DB_PATH = "tracker.db"
 
-# ─── Database Setup ───────────────────────────────────────────
 def get_db():
     conn = sqlite3.connect(DB_PATH)
     conn.row_factory = sqlite3.Row
@@ -25,8 +25,6 @@ def get_db():
 def init_db():
     conn = get_db()
     c = conn.cursor()
-    
-    # Tasks table
     c.execute("""
         CREATE TABLE IF NOT EXISTS tasks (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -35,8 +33,6 @@ def init_db():
             icon TEXT DEFAULT '📌'
         )
     """)
-    
-    # Daily logs table
     c.execute("""
         CREATE TABLE IF NOT EXISTS daily_logs (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -47,8 +43,6 @@ def init_db():
             UNIQUE(task_id, date)
         )
     """)
-
-    # Insert default tasks if empty
     c.execute("SELECT COUNT(*) FROM tasks")
     if c.fetchone()[0] == 0:
         default_tasks = [
@@ -60,13 +54,11 @@ def init_db():
             ("Sport / Yurish", "sog'liq", "🏃"),
         ]
         c.executemany("INSERT INTO tasks (name, category, icon) VALUES (?, ?, ?)", default_tasks)
-    
     conn.commit()
     conn.close()
 
 init_db()
 
-# ─── Models ───────────────────────────────────────────────────
 class TaskCreate(BaseModel):
     name: str
     category: str
@@ -76,8 +68,6 @@ class LogUpdate(BaseModel):
     task_id: int
     date: str
     completed: bool
-
-# ─── Routes ───────────────────────────────────────────────────
 
 @app.get("/")
 def root():
@@ -93,10 +83,8 @@ def get_tasks():
 @app.post("/tasks")
 def create_task(task: TaskCreate):
     conn = get_db()
-    conn.execute(
-        "INSERT INTO tasks (name, category, icon) VALUES (?, ?, ?)",
-        (task.name, task.category, task.icon)
-    )
+    conn.execute("INSERT INTO tasks (name, category, icon) VALUES (?, ?, ?)",
+        (task.name, task.category, task.icon))
     conn.commit()
     conn.close()
     return {"message": "Vazifa qo'shildi ✅"}
@@ -114,12 +102,8 @@ def delete_task(task_id: int):
 def get_logs(date: str):
     conn = get_db()
     tasks = conn.execute("SELECT * FROM tasks").fetchall()
-    logs = conn.execute(
-        "SELECT * FROM daily_logs WHERE date = ?", (date,)
-    ).fetchall()
-    
+    logs = conn.execute("SELECT * FROM daily_logs WHERE date = ?", (date,)).fetchall()
     log_map = {l["task_id"]: l["completed"] for l in logs}
-    
     result = []
     for task in tasks:
         result.append({
@@ -129,7 +113,6 @@ def get_logs(date: str):
             "icon": task["icon"],
             "completed": bool(log_map.get(task["id"], 0))
         })
-    
     conn.close()
     return result
 
@@ -148,40 +131,22 @@ def update_log(log: LogUpdate):
 @app.get("/stats")
 def get_stats():
     conn = get_db()
-    
-    # Last 30 days completion rate
     stats = conn.execute("""
-        SELECT date, 
-               COUNT(*) as total,
-               SUM(completed) as done
-        FROM daily_logs
-        GROUP BY date
-        ORDER BY date DESC
-        LIMIT 30
+        SELECT date, COUNT(*) as total, SUM(completed) as done
+        FROM daily_logs GROUP BY date ORDER BY date DESC LIMIT 30
     """).fetchall()
-    
-    # Streak calculation
     all_dates = conn.execute("""
-        SELECT date, 
-               COUNT(*) as total,
-               SUM(completed) as done
-        FROM daily_logs
-        GROUP BY date
-        ORDER BY date DESC
+        SELECT date, COUNT(*) as total, SUM(completed) as done
+        FROM daily_logs GROUP BY date ORDER BY date DESC
     """).fetchall()
-    
     streak = 0
     for row in all_dates:
         if row["done"] == row["total"] and row["total"] > 0:
             streak += 1
         else:
             break
-    
     conn.close()
-    return {
-        "daily": [dict(s) for s in stats],
-        "streak": streak
-    }
+    return {"daily": [dict(s) for s in stats], "streak": streak}
 
 @app.get("/stats/weekly")
 def get_weekly():
@@ -197,3 +162,11 @@ def get_weekly():
     """).fetchall()
     conn.close()
     return [dict(w) for w in weekly]
+
+def run_bot():
+    import asyncio
+    from bot import main as bot_main
+    asyncio.run(bot_main())
+
+bot_thread = threading.Thread(target=run_bot, daemon=True)
+bot_thread.start()
